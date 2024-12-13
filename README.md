@@ -7,9 +7,9 @@
 # Spark for Minestom
 ```kts
 repositories {
-    mavenLocal() // this library currently needs to published to your local maven repository
-    maven("https://repo.lucko.me/")
-    maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    maven("https://repo.hypera.dev/snapshots/") // spark-minestom
+    maven("https://repo.lucko.me/") // spark-common
+    maven("https://oss.sonatype.org/content/repositories/snapshots/") // spark-common's dependencies
 }
 
 dependencies {
