@@ -1,0 +1,76 @@
+name: Publish Minestom support
+on:
+  push:
+    branches:
+      - 'feat/minestom'
+
+concurrency: "gradle-snapshot-${{ github.ref }}"
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: "Publish"
+    runs-on: "ubuntu-latest"
+    environment:
+      name: "snapshot"
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: "Validate Gradle wrapper"
+        uses: gradle/actions/wrapper-validation@d9c87d481d55275bb5441eef3fe0e46805f9ef70 # v3.5.0
+
+      - name: "Setup JDK 21"
+        uses: actions/setup-java@6a0805fcefea3d4657a47ac4c165951e33482018 # v4.2.2
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: "Setup Gradle"
+        uses: gradle/actions/setup-gradle@d9c87d481d55275bb5441eef3fe0e46805f9ef70 # v3.5.0
+        with:
+          gradle-version: "wrapper"
+
+      - name: "Validate version"
+        run: |
+          VERSION="$(./gradlew properties | awk '/^version:/ { print $2; }')"
+          if ! echo "$VERSION" | grep -q 'SNAPSHOT'; then
+            echo "Release version detected, refusing to publish..."
+            exit 1
+          fi
+          echo "Snapshot version detected"
+
+      - name: "Publish artifacts"
+        run: ./gradlew publish
+        env:
+          ORG_GRADLE_PROJECT_hyperaSnapshotsUsername: "${{ secrets.HYPERA_SNAPSHOTS_USERNAME }}"
+          ORG_GRADLE_PROJECT_hyperaSnapshotsPassword: "${{ secrets.HYPERA_SNAPSHOTS_PASSWORD }}"
+
+  dependency-graph:
+    name: "Dependency Graph"
+    runs-on: "ubuntu-latest"
+    permissions:
+      contents: write
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: "Setup JDK 21"
+        uses: actions/setup-java@6a0805fcefea3d4657a47ac4c165951e33482018 # v4.2.2
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      - name: "Validate Gradle wrapper"
+        uses: gradle/actions/wrapper-validation@d9c87d481d55275bb5441eef3fe0e46805f9ef70 # v3.5.0
+
+      - name: "Generate and submit dependency graph"
+        uses: gradle/actions/dependency-submission@d9c87d481d55275bb5441eef3fe0e46805f9ef70 # v3.5.0
