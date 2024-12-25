@@ -169,17 +169,16 @@ final class MinestomSparkPlugin implements SparkPlugin {
             ArgumentStringArray arrayArgument = ArgumentType.StringArray("args");
             arrayArgument.setSuggestionCallback(this);
 
-            addSyntax(this, arrayArgument);
-            setDefaultExecutor((sender, context) -> platform.executeCommand(MinestomSparkPlugin.this.createCommandSender(sender), new String[0]));
+            this.setCondition((sender, ignored) -> this.platform.hasPermissionForAnyCommand(MinestomSparkPlugin.this.createCommandSender(sender)));
+            this.addSyntax(this, arrayArgument);
+            this.setDefaultExecutor((sender, context) -> platform.executeCommand(MinestomSparkPlugin.this.createCommandSender(sender), new String[0]));
         }
 
         // execute
         @Override
         public void apply(@NotNull CommandSender sender, @NotNull CommandContext context) {
             String[] args = processArgs(context, false);
-            if (args == null) {
-                return;
-            }
+            if (args == null) return;
 
             this.platform.executeCommand(MinestomSparkPlugin.this.createCommandSender(sender), args);
         }
@@ -188,21 +187,15 @@ final class MinestomSparkPlugin implements SparkPlugin {
         @Override
         public void apply(@NotNull CommandSender sender, @NotNull CommandContext context, @NotNull Suggestion suggestion) {
             String[] args = processArgs(context, true);
-            if (args == null) {
-                return;
-            }
+            if (args == null) return;
 
             Iterable<String> suggestionEntries = this.platform.tabCompleteCommand(MinestomSparkPlugin.this.createCommandSender(sender), args);
-            for (String suggestionEntry : suggestionEntries) {
-                suggestion.addEntry(new SuggestionEntry(suggestionEntry));
-            }
+            for (String suggestionEntry : suggestionEntries) suggestion.addEntry(new SuggestionEntry(suggestionEntry));
         }
 
         private static String [] processArgs(CommandContext context, boolean tabComplete) {
             String[] split = context.getInput().split(" ", tabComplete ? -1 : 0);
-            if (split.length == 0 || !split[0].equals("/spark") && !split[0].equals("spark")) {
-                return null;
-            }
+            if (split.length == 0 || !split[0].equals("/spark") && !split[0].equals("spark")) return null;
 
             return Arrays.copyOfRange(split, 1, split.length);
         }
