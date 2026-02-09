@@ -7,19 +7,19 @@ plugins {
 
 tasks.withType(JavaCompile) {
     // override, compile targeting J21
-    options.release = 21
+    options.release = 25
 }
 
 dependencies {
-    var minestom = "11d7530dfc"
+    var minestom = "net.minestom:minestom:2026.01.08-1.21.11"
 
     api "me.lucko:spark-common:${project.baseVersion}-SNAPSHOT"
 
-    compileOnly "net.minestom:minestom-snapshots:$minestom"
+    compileOnly minestom
     implementation "com.google.guava:guava:33.3.1-jre"
 
-    testImplementation "net.minestom:minestom-snapshots:$minestom"
-    testImplementation "ch.qos.logback:logback-classic:1.5.12"
+    testImplementation minestom
+    testImplementation "ch.qos.logback:logback-classic:1.5.28"
 }
 
 task processSource(type: Sync) {

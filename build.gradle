@@ -14,7 +14,8 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'java-library'
-    apply plugin: 'org.cadixdev.licenser'
+    // doesn't work in Gradle 9
+//    apply plugin: 'org.cadixdev.licenser'
 
     ext {
         baseVersion = '1.10.165'
@@ -56,10 +57,10 @@ subprojects {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 
-    license {
-        header = rootProject.file('HEADER.txt')
-        include '**/*.java'
-    }
+//    license {
+//        header = rootProject.file('HEADER.txt')
+//        include '**/*.java'
+//    }
 
     repositories {
         mavenCentral()

@@ -23,12 +23,12 @@ package me.lucko.spark.minestom;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
-import net.minestom.server.extras.MojangAuth;
 import net.minestom.server.extras.lan.OpenToLAN;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
@@ -36,7 +36,7 @@ import net.minestom.server.instance.block.Block;
 public final class MinestomServer {
 
     public static void main(String[] args) {
-        MinecraftServer server = MinecraftServer.init();
+        MinecraftServer server = MinecraftServer.init(new Auth.Online());
         MinecraftServer.setBrandName("LU15");
 
         // initialize Spark
@@ -67,7 +67,6 @@ public final class MinestomServer {
         });
 
         OpenToLAN.open();
-        MojangAuth.init();
 
         server.start("0.0.0.0", 25565);
     }
