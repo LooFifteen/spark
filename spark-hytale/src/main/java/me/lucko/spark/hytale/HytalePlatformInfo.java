@@ -18,41 +18,35 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.lucko.spark.folia;
+package me.lucko.spark.hytale;
 
-import me.lucko.spark.common.command.sender.AbstractCommandSender;
-import net.kyori.adventure.text.Component;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import com.hypixel.hytale.common.util.java.ManifestUtil;
+import me.lucko.spark.common.platform.PlatformInfo;
 
-import java.util.UUID;
+public class HytalePlatformInfo implements PlatformInfo {
 
-public class FoliaCommandSender extends AbstractCommandSender<CommandSender> {
-
-    public FoliaCommandSender(CommandSender sender) {
-        super(sender);
+    @Override
+    public Type getType() {
+        return Type.SERVER;
     }
 
     @Override
     public String getName() {
-        return this.delegate.getName();
+        return "Hytale";
     }
 
     @Override
-    public UUID getUniqueId() {
-        if (super.delegate instanceof Player) {
-            return ((Player) super.delegate).getUniqueId();
-        }
+    public String getBrand() {
+        return "Hytale";
+    }
+
+    @Override
+    public String getVersion() {
+        return ManifestUtil.getImplementationVersion();
+    }
+
+    @Override
+    public String getMinecraftVersion() {
         return null;
-    }
-
-    @Override
-    public void sendMessage(Component message) {
-        super.delegate.sendMessage(message);
-    }
-
-    @Override
-    public boolean hasPermission(String permission) {
-        return super.delegate.hasPermission(permission);
     }
 }
